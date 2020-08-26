@@ -1,12 +1,32 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 
 namespace MediatR.Helloworld
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static async Task Main()
         {
-            Console.WriteLine("Hello World!");
+            var provider = new ServiceCollection()
+                .ConfigureServices()
+                .BuildServiceProvider();
+            using var scope = provider.CreateScope();
+            await RunApp(scope.ServiceProvider);
+        }
+
+        private static async Task RunApp(IServiceProvider services)
+        {
+            var mediator = services.GetRequiredService<IMediator>();
+
+            Console.WriteLine("Send request:");
+            await mediator.Send(new Request());
+        }
+
+        private static ServiceCollection ConfigureServices(this ServiceCollection collection)
+        {
+            collection.AddMediatR(typeof(Program));
+            return collection;
         }
     }
 }

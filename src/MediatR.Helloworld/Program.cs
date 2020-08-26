@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
+using MediatR.Pipeline;
 
 namespace MediatR.Helloworld
 {
@@ -22,14 +23,20 @@ namespace MediatR.Helloworld
             Console.WriteLine("Send request:");
             await mediator.Send(new Request());
 
-            Console.WriteLine("Send notification:");
+            Console.WriteLine("\nSend notification:");
             await mediator.Publish(new Notification());
+
+            Console.WriteLine("\nSend faulty request:");
+            await mediator.Send(new FaultyRequest());
         }
 
-        private static ServiceCollection ConfigureServices(this ServiceCollection collection)
+        private static ServiceCollection ConfigureServices(this ServiceCollection services)
         {
-            collection.AddMediatR(typeof(Program));
-            return collection;
+            services.AddMediatR(typeof(Program));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestExceptionProcessorBehavior<,>));
+            services.AddTransient(typeof(IRequestExceptionHandler<FaultyRequest, FaultyRequestHandler,
+                ArgumentException>), typeof(RequestExceptionHandler));
+            return services;
         }
     }
 }

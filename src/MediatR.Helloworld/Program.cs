@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
+using MediatR.Helloworld.Notifications;
+using MediatR.Helloworld.Pipeline;
 
 namespace MediatR.Helloworld
 {
@@ -20,16 +22,16 @@ namespace MediatR.Helloworld
             var mediator = services.GetRequiredService<IMediator>();
 
             Console.WriteLine("Send request:");
-            await mediator.Send(new Request());
+            await mediator.Send(new Requests.Request());
 
             Console.WriteLine("\nSend notification:");
             await mediator.Publish(new Notification());
 
             Console.WriteLine("\nSend faulty request:");
-            await mediator.Send(new FaultyRequest());
+            await mediator.Send(new Exceptions.Request());
 
             Console.WriteLine("\nSend request with processors:");
-            await mediator.Send(new ProcessedRequest());
+            await mediator.Send(new Pipeline.Request());
         }
 
         private static ServiceCollection ConfigureServices(this ServiceCollection services)

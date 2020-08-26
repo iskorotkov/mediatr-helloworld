@@ -21,6 +21,9 @@ namespace MediatR.Helloworld
 
             Console.WriteLine("Send request:");
             await mediator.Send(new Request());
+
+            Console.WriteLine("Send notification:");
+            await mediator.Publish(new Notification());
         }
 
         private static ServiceCollection ConfigureServices(this ServiceCollection collection)
